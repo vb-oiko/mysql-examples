@@ -119,6 +119,10 @@ INSERT INTO Parts_in_Orders (order_id, part_id, Quantity) VALUES (3, 4, 15);
 INSERT INTO Parts_in_Orders (order_id, part_id, Quantity) VALUES (4, 5, 20); 
 
 
+-- Query all orders in a specified time frame, returning the order number, customer name, number
+-- of ordered items and their total sum, as well as expected shipping date and actual shipping date
+-- (when the order has been shipped, or NULL when it has not)
+
 SELECT 
     o.id as order_id,
     CONCAT(c.first_name, " ",  c.last_name) as customer_name,
@@ -134,3 +138,28 @@ JOIN Parts_info as p ON po.part_id = p.id
 WHERE
     o.Date_of_Receipt BETWEEN DATE("2023-06-15") AND DATE("2024-01-01")
 GROUP BY o.id;
+
+-- Select a single order and list both order header info (order number, date and time of the order,
+-- customer name) as well as all ordered items (part name, quantity and price).
+
+SELECT
+    o.id as order_id,
+    o.Date_of_Receipt as date_of_receipt,
+    CONCAT(c.first_name, " ",  c.last_name) as customer_name,
+    p.part_name,
+    po.Quantity,
+    p.price
+FROM Orders_info as o
+JOIN Customers as c ON c.id = o.customer_id
+JOIN Parts_in_Orders as po ON po.order_id = o.id
+JOIN Parts_info as p ON po.part_id = p.id
+WHERE o.id = 1;
+
+-- List all parts (their names) and how many times they have been included in orders (across all
+-- orders)
+SELECT 
+    p.part_name,
+    SUM(po.Quantity) as total_quantity
+FROM Parts_info as p
+JOIN Parts_in_Orders as po ON po.part_id = p.id
+GROUP BY p.id;
