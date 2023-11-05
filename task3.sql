@@ -5,14 +5,14 @@ USE Mail_Company;
 CREATE TABLE Employees (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50),
-    second_name VARCHAR(50),
+    last_name VARCHAR(50),
     zip_code INT
 );
 
 CREATE TABLE Customers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50),
-    second_name VARCHAR(50),
+    last_name VARCHAR(50),
     zip_code INT
 );
 
@@ -121,17 +121,16 @@ INSERT INTO Parts_in_Orders (order_id, part_id, Quantity) VALUES (4, 5, 20);
 
 SELECT 
     o.id as order_id,
-    CONCAT (c.first_name, c.last_name) as customer_name,
-    SUM (po.Quantity) as total_items,
-    SUM (po.Quantity * p.price) as total_sum,
+    CONCAT(c.first_name, " ",  c.last_name) as customer_name,
+    SUM(po.Quantity) as total_items,
+    SUM(po.Quantity * p.price) as total_sum,
     o.Expected_Ship_Date,
     o.Actual_Ship_Date
 FROM 
     Orders_info as o
-JOIN 
-    Customers as c ON c.order_id = o.id, 
-    Parts_in_Orders as po ON po.order_id = o.id,
-    Parts_info as p ON po.part_id = Parts_info.id
-GROUP BY o.id
+JOIN Customers as c ON c.id = o.customer_id
+JOIN Parts_in_Orders as po ON po.order_id = o.id
+JOIN Parts_info as p ON po.part_id = p.id
 WHERE
-    o.Date_of_Receipt BETWEEN DATE("2017-06-15") AND DATE("2017-06-15");
+    o.Date_of_Receipt BETWEEN DATE("2023-06-15") AND DATE("2024-01-01")
+GROUP BY o.id;
